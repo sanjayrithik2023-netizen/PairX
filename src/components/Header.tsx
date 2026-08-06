@@ -97,51 +97,26 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearchFilter }) => {
             </button>
           )}
 
-          {/* Notifications Dropdown Panel */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setShowNotificationsDropdown(!showNotificationsDropdown);
-                if (!showNotificationsDropdown) markNotificationsRead();
-              }}
-              className="p-2 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors relative min-h-[36px] min-w-[36px] flex items-center justify-center border border-slate-200/80"
-              title="Notifications"
-            >
-              <Bell className="w-4 h-4" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center animate-pulse border border-white">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-
-            {/* Notifications Dropdown Panel */}
-            {showNotificationsDropdown && (
-              <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50">
-                <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
-                  <h4 className="font-extrabold text-xs text-slate-900">Notifications</h4>
-                  <span className="text-[11px] text-rose-600 font-bold cursor-pointer hover:underline" onClick={markNotificationsRead}>
-                    Mark all read
-                  </span>
-                </div>
-                <div className="max-h-64 overflow-y-auto divide-y divide-slate-100">
-                  {notifications.length === 0 ? (
-                    <p className="text-xs text-slate-400 text-center py-6">No notifications yet</p>
-                  ) : (
-                    notifications.map(n => (
-                      <div key={n.id} className={`p-3 text-xs hover:bg-slate-50 transition-colors ${!n.read ? 'bg-rose-50/50' : ''}`}>
-                        <div className="font-bold text-slate-800 flex items-center gap-1.5">
-                          <span>{n.title}</span>
-                        </div>
-                        <p className="text-slate-600 mt-0.5 text-[11px] leading-snug">{n.message}</p>
-                        <span className="text-[10px] text-slate-400 mt-1 block font-mono">{n.timestamp}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+          {/* Notifications Button (Opens Page) */}
+          <button
+            onClick={() => {
+              markNotificationsRead();
+              setActiveTab('notifications');
+            }}
+            className={`p-2 rounded-xl transition-colors relative min-h-[36px] min-w-[36px] flex items-center justify-center border ${
+              activeTab === 'notifications'
+                ? 'bg-rose-50 text-rose-600 border-rose-200'
+                : 'text-slate-600 hover:text-rose-600 hover:bg-rose-50 border-slate-200/80'
+            }`}
+            title="Open Notifications Page"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center animate-pulse border border-white">
+                {unreadCount}
+              </span>
             )}
-          </div>
+          </button>
 
           {/* Profile Picture Shown */}
           {isAuthenticated ? (

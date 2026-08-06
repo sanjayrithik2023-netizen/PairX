@@ -17,6 +17,8 @@ import { VideoCallView } from './components/VideoCallView';
 import { AdminDashboardView } from './components/AdminDashboardView';
 import { LoginModal } from './components/LoginModal';
 import { ProfileView } from './components/ProfileView';
+import { NotificationsView } from './components/NotificationsView';
+import { CallsView } from './components/CallsView';
 
 function MainLayout() {
   const { activeTab, setActiveTab, callState, loginDemoUser } = useApp();
@@ -57,6 +59,8 @@ function MainLayout() {
         {activeTab === 'meet-requests' && <MeetRequestsView />}
         {activeTab === 'admin' && <AdminDashboardView />}
         {activeTab === 'profile' && <ProfileView />}
+        {activeTab === 'notifications' && <NotificationsView />}
+        {activeTab === 'calls' && <CallsView />}
         {activeTab === 'call' && <VideoCallView />}
       </main>
 

@@ -86,11 +86,7 @@ export const BottomNav: React.FC = () => {
             <button
               key={item.id}
               onClick={() => {
-                if (item.isCall) {
-                  startCall('video');
-                } else {
-                  setActiveTab(item.id);
-                }
+                setActiveTab(item.id);
               }}
               className={`flex flex-col items-center justify-center w-18 h-full relative transition-colors ${
                 isActive ? 'text-rose-600 font-bold' : item.isCall ? 'text-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-800 font-medium'
