@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, MessageSquare, Calendar, Shield, Users, Building2, ArrowLeft, BarChart3, Bell } from 'lucide-react';
+import { Home, MessageSquare, Calendar, Shield, Users, Building2, ArrowLeft, BarChart3, Bell, PhoneCall } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
@@ -9,7 +9,8 @@ export const BottomNav: React.FC = () => {
     adminSubTab, 
     setAdminSubTab, 
     conversations, 
-    meetRequests 
+    meetRequests,
+    startCall 
   } = useApp();
 
   const totalUnreadMessages = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
@@ -67,11 +68,12 @@ export const BottomNav: React.FC = () => {
     );
   }
 
-  // STANDARD CLIENT VIEW MOBILE BOTTOM NAV ("Booking" instead of Connect)
+  // STANDARD CLIENT VIEW MOBILE BOTTOM NAV ("Booking" instead of Connect + Separate Calls Button)
   const navItems = [
     { id: 'home', label: 'Explore', icon: Home },
     { id: 'meet-requests', label: 'Booking', icon: Calendar, badge: pendingRequestsCount },
     { id: 'messages', label: 'Messages', icon: MessageSquare, badge: totalUnreadMessages },
+    { id: 'calls', label: 'Calls', icon: PhoneCall, isCall: true },
   ];
 
   return (
@@ -83,20 +85,28 @@ export const BottomNav: React.FC = () => {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center justify-center w-24 h-full relative transition-colors ${
-                isActive ? 'text-rose-600 font-bold' : 'text-slate-500 hover:text-slate-800 font-medium'
+              onClick={() => {
+                if (item.isCall) {
+                  startCall('video');
+                } else {
+                  setActiveTab(item.id);
+                }
+              }}
+              className={`flex flex-col items-center justify-center w-18 h-full relative transition-colors ${
+                isActive ? 'text-rose-600 font-bold' : item.isCall ? 'text-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
             >
               <div className="relative">
-                <Icon className={`w-5 h-5 ${isActive ? 'scale-110' : ''} transition-transform`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'scale-110' : item.isCall ? 'animate-pulse text-emerald-600' : ''} transition-transform`} />
                 {!!item.badge && item.badge > 0 && (
                   <span className="absolute -top-1.5 -right-2 bg-rose-500 text-white text-[9px] font-bold px-1 py-0.2 rounded-full min-w-[14px] text-center border border-white">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight">{item.label}</span>
+              <span className={`text-[10px] mt-1 tracking-tight ${item.isCall ? 'text-emerald-700 font-bold' : ''}`}>
+                {item.label}
+              </span>
               {isActive && (
                 <span className="absolute top-0 w-8 h-0.5 bg-rose-600 rounded-full"></span>
               )}
