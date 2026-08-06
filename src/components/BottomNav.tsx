@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, MessageSquare, Calendar, Shield, Users, Building2, ArrowLeft, BarChart3, Bell, PhoneCall } from 'lucide-react';
+import { Home, MessageSquare, Calendar, Shield, Users, Building2, ArrowLeft, BarChart3, Bell } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
@@ -9,8 +9,7 @@ export const BottomNav: React.FC = () => {
     adminSubTab, 
     setAdminSubTab, 
     conversations, 
-    meetRequests,
-    startCall
+    meetRequests 
   } = useApp();
 
   const totalUnreadMessages = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
@@ -68,12 +67,11 @@ export const BottomNav: React.FC = () => {
     );
   }
 
-  // STANDARD CLIENT VIEW MOBILE BOTTOM NAV
+  // STANDARD CLIENT VIEW MOBILE BOTTOM NAV ("Booking" instead of Connect)
   const navItems = [
     { id: 'home', label: 'Explore', icon: Home },
-    { id: 'meet-requests', label: 'Connect', icon: Calendar, badge: pendingRequestsCount },
+    { id: 'meet-requests', label: 'Booking', icon: Calendar, badge: pendingRequestsCount },
     { id: 'messages', label: 'Messages', icon: MessageSquare, badge: totalUnreadMessages },
-    { id: 'calls', label: 'Calls', icon: PhoneCall, isCall: true },
   ];
 
   return (
@@ -85,15 +83,9 @@ export const BottomNav: React.FC = () => {
           return (
             <button
               key={item.id}
-              onClick={() => {
-                if (item.isCall) {
-                  startCall('video');
-                } else {
-                  setActiveTab(item.id);
-                }
-              }}
-              className={`flex flex-col items-center justify-center w-16 h-full relative transition-colors ${
-                isActive ? 'text-rose-600 font-bold' : item.isCall ? 'text-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-800 font-medium'
+              onClick={() => setActiveTab(item.id)}
+              className={`flex flex-col items-center justify-center w-24 h-full relative transition-colors ${
+                isActive ? 'text-rose-600 font-bold' : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
             >
               <div className="relative">

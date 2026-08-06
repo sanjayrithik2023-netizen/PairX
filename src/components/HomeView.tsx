@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, SlidersHorizontal, ShieldCheck, Heart, Coffee, 
-  MapPin, Sparkles, UserCheck, MessageSquare, Star, ArrowUpRight 
+  MapPin, Sparkles, UserCheck, MessageSquare, Star, ArrowUpRight,
+  ChevronLeft, ChevronRight, Calendar, Building2, CheckCircle2
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { UserProfile } from '../types';
@@ -13,13 +14,12 @@ export const HomeView: React.FC = () => {
     profiles, 
     likedProfileIds, 
     toggleLikeProfile, 
-    toggleFavoriteProfile,
     favoriteProfileIds,
     setActiveProfileModal, 
     setActiveMeetModal,
     setActiveTab,
     userPreferences,
-    updateUserPreferences
+    meetRequests
   } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,6 +27,64 @@ export const HomeView: React.FC = () => {
   const [onlyVerified, setOnlyVerified] = useState(false);
   const [onlyOnline, setOnlyOnline] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
+
+  // Flipkart Banner Slider State
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const bannerSlides = [
+    {
+      id: 'slide-1',
+      tag: '100% VERIFIED SINGLE BROKER DESK',
+      title: 'Tiruppur Premium Model Lounges',
+      subtitle: 'Book verified female profiles with single-broker safety clearance pass.',
+      btnText: 'Book Lounge Meet',
+      btnAction: () => {
+        const firstModel = profiles[0];
+        if (firstModel) setActiveMeetModal(firstModel);
+      },
+      gradient: 'from-rose-600 via-pink-600 to-purple-700',
+      badgeBg: 'bg-emerald-500/90',
+      imgUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800'
+    },
+    {
+      id: 'slide-2',
+      tag: 'EXECUTIVE LOUNGES IN TIRUPPUR',
+      title: 'Rayapuram & Avinashi Road Lounges',
+      subtitle: 'Private & secure coffee lounges equipped with high-speed WiFi and valet parking.',
+      btnText: 'View My Bookings',
+      btnAction: () => setActiveTab('meet-requests'),
+      gradient: 'from-purple-700 via-indigo-600 to-slate-900',
+      badgeBg: 'bg-amber-500/90',
+      imgUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800'
+    },
+    {
+      id: 'slide-3',
+      tag: 'REAL-TIME CLEARANCE',
+      title: 'Direct Single Broker Desk Chat',
+      subtitle: 'Speak directly with our single broker desk for quick clearance and venue booking.',
+      btnText: 'Chat Broker Desk',
+      btnAction: () => setActiveTab('messages'),
+      gradient: 'from-pink-600 via-rose-700 to-rose-950',
+      badgeBg: 'bg-rose-500/90',
+      imgUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=800'
+    }
+  ];
+
+  // Auto slide carousel every 4.5 seconds
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+    }, 4500);
+    return () => clearInterval(slideTimer);
+  }, [bannerSlides.length]);
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+  };
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
+  };
 
   // Filter logic
   const filteredProfiles = profiles.filter(profile => {
@@ -42,38 +100,118 @@ export const HomeView: React.FC = () => {
   const featuredProfiles = profiles.filter(p => p.verified);
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 pt-4">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div className="min-h-screen bg-slate-50 pb-20 pt-2 sm:pt-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5">
 
-        {/* Search Bar & Quick Filters */}
-        <div className="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 space-y-3">
+        {/* FLIPKART STYLE PROMOTIONAL BANNER CAROUSEL */}
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-slate-200">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4 }}
+              className={`relative bg-gradient-to-r ${bannerSlides[currentSlide].gradient} text-white p-5 sm:p-8 min-h-[180px] sm:min-h-[220px] flex flex-col justify-between overflow-hidden`}
+            >
+              {/* Background Decor Image */}
+              <div className="absolute right-0 top-0 bottom-0 w-1/2 sm:w-2/5 opacity-25 sm:opacity-40 mix-blend-overlay pointer-events-none">
+                <img 
+                  src={bannerSlides[currentSlide].imgUrl} 
+                  alt="Banner" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Banner Header Tag */}
+              <div className="relative z-10 flex items-center gap-2">
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-white shadow-xs ${bannerSlides[currentSlide].badgeBg}`}>
+                  {bannerSlides[currentSlide].tag}
+                </span>
+                <span className="text-[10px] text-white/80 font-mono">Tiruppur Hub</span>
+              </div>
+
+              {/* Main Content */}
+              <div className="relative z-10 max-w-xl my-2">
+                <h2 className="text-xl sm:text-3xl font-black tracking-tight leading-tight drop-shadow-sm">
+                  {bannerSlides[currentSlide].title}
+                </h2>
+                <p className="text-xs sm:text-sm text-white/90 mt-1 line-clamp-2 leading-relaxed">
+                  {bannerSlides[currentSlide].subtitle}
+                </p>
+              </div>
+
+              {/* Action Button & Slider Controls */}
+              <div className="relative z-10 flex items-center justify-between pt-2">
+                <button
+                  onClick={bannerSlides[currentSlide].btnAction}
+                  className="px-4 py-2 bg-white text-slate-900 hover:bg-rose-50 text-xs font-black rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-1.5"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-rose-600" />
+                  <span>{bannerSlides[currentSlide].btnText}</span>
+                </button>
+
+                {/* Left/Right Prev Next Controls & Dots */}
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={handlePrevSlide}
+                    className="w-7 h-7 rounded-full bg-slate-950/40 hover:bg-slate-950/70 text-white flex items-center justify-center backdrop-blur-md transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <div className="flex items-center gap-1">
+                    {bannerSlides.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentSlide(idx)}
+                        className={`h-1.5 rounded-full transition-all ${
+                          idx === currentSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <button 
+                    onClick={handleNextSlide}
+                    className="w-7 h-7 rounded-full bg-slate-950/40 hover:bg-slate-950/70 text-white flex items-center justify-center backdrop-blur-md transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* COMPACT SEARCH & QUICK FILTERS */}
+        <div className="bg-white p-3 sm:p-4 rounded-2xl shadow-xs border border-slate-200 space-y-2.5">
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
               <input
                 type="text"
-                placeholder="Search by name, interests or area..."
+                placeholder="Search models, interests or localities in Tiruppur..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 min-h-[44px] text-xs rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all"
+                className="w-full pl-9 pr-3 py-2 min-h-[38px] text-xs rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all"
               />
             </div>
             <button
               onClick={() => setShowFilterModal(true)}
-              className="px-3.5 py-2.5 min-h-[44px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="px-3 py-2 min-h-[38px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
             >
-              <SlidersHorizontal className="w-4 h-4" />
+              <SlidersHorizontal className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Filters</span>
             </button>
           </div>
 
-          {/* Quick Filter Chips (Wrapping layout without scrolling) */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+          {/* Quick Filter Chips */}
+          <div className="flex flex-wrap items-center gap-1.5">
             {TIRUPPUR_LOCALITIES.map(loc => (
               <button
                 key={loc}
                 onClick={() => setSelectedFilterLocality(loc)}
-                className={`px-3 py-1.5 min-h-[32px] rounded-full text-[11px] font-semibold transition-all flex items-center justify-center ${
+                className={`px-2.5 py-1 min-h-[28px] rounded-full text-[11px] font-semibold transition-all flex items-center justify-center ${
                   selectedFilterLocality === loc
                     ? 'bg-rose-600 text-white shadow-xs'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -84,97 +222,113 @@ export const HomeView: React.FC = () => {
             ))}
             <button
               onClick={() => setOnlyVerified(!onlyVerified)}
-              className={`px-3 py-1.5 min-h-[32px] rounded-full text-[11px] font-semibold transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1 min-h-[28px] rounded-full text-[11px] font-semibold transition-all flex items-center gap-1 ${
                 onlyVerified
                   ? 'bg-emerald-600 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               <ShieldCheck className="w-3 h-3" />
-              <span>Verified Only</span>
+              <span>Verified</span>
             </button>
             <button
               onClick={() => setOnlyOnline(!onlyOnline)}
-              className={`px-3 py-1.5 min-h-[32px] rounded-full text-[11px] font-semibold transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1 min-h-[28px] rounded-full text-[11px] font-semibold transition-all flex items-center gap-1 ${
                 onlyOnline
                   ? 'bg-purple-600 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span>Online Now</span>
+              <span>Online</span>
             </button>
           </div>
         </div>
 
-        {/* Featured Members Carousel Section */}
+        {/* Featured Profiles Section */}
         <div className="space-y-3">
           <div className="flex justify-between items-baseline">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-500" />
-                Featured Tiruppur Singles
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                Featured Tiruppur Profiles
               </h2>
-              <p className="text-xs text-slate-500">Verified members looking for coffee meetups this week</p>
+              <p className="text-[11px] text-slate-500">Verified female profiles managed by Single Broker Desk</p>
             </div>
           </div>
 
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
-            {featuredProfiles.map(profile => (
-              <div
-                key={`feat-${profile.id}`}
-                onClick={() => setActiveProfileModal(profile)}
-                className="min-w-[200px] w-52 bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
-              >
-                <div className="relative h-44 overflow-hidden">
-                  <img
-                    src={profile.avatar}
-                    alt={profile.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
-                  
-                  {profile.verified && (
-                    <span className="absolute top-2 left-2 bg-emerald-500/90 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3" /> Verified
+            {featuredProfiles.map(profile => {
+              const activeBooking = meetRequests.find(r => r.profileId === profile.id);
+
+              return (
+                <div
+                  key={`feat-${profile.id}`}
+                  onClick={() => setActiveProfileModal(profile)}
+                  className="min-w-[190px] w-48 bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
+                >
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={profile.avatar}
+                      alt={profile.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
+                    
+                    {profile.verified && (
+                      <span className="absolute top-2 left-2 bg-emerald-500/90 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3" /> Verified
+                      </span>
+                    )}
+
+                    <span className="absolute top-2 right-2 bg-slate-900/60 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[10px] font-semibold">
+                      {profile.compatibilityScore}% Match
                     </span>
-                  )}
 
-                  <span className="absolute top-2 right-2 bg-slate-900/60 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[10px] font-semibold">
-                    {profile.compatibilityScore}% Match
-                  </span>
+                    <div className="absolute bottom-2 left-2 right-2 text-white">
+                      <h4 className="font-bold text-sm tracking-tight">{profile.name}, {profile.age}</h4>
+                      <p className="text-[10px] text-slate-200 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-rose-400" /> {profile.locality}
+                      </p>
+                    </div>
+                  </div>
 
-                  <div className="absolute bottom-2 left-2 right-2 text-white">
-                    <h4 className="font-bold text-sm tracking-tight">{profile.name}, {profile.age}</h4>
-                    <p className="text-[10px] text-slate-200 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-rose-400" /> {profile.locality}
-                    </p>
+                  <div className="p-2.5 bg-white flex items-center justify-between gap-1">
+                    <span className="text-[9px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full font-bold truncate">
+                      {profile.intent}
+                    </span>
+                    {activeBooking ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveTab('meet-requests');
+                        }}
+                        className="text-[10px] bg-amber-500 text-slate-950 font-black px-2 py-1 rounded-lg transition-colors flex items-center gap-1 shadow-xs"
+                      >
+                        <CheckCircle2 className="w-3 h-3" /> Booked
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMeetModal(profile);
+                        }}
+                        className="text-[10px] bg-rose-600 hover:bg-rose-700 text-white font-black px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 shadow-xs"
+                      >
+                        <Coffee className="w-3 h-3" /> Book Model
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                <div className="p-3 bg-white flex items-center justify-between">
-                  <span className="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full font-semibold">
-                    {profile.intent}
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveMeetModal(profile);
-                    }}
-                    className="text-xs bg-rose-600 hover:bg-rose-700 text-white font-medium px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1"
-                  >
-                    <Coffee className="w-3 h-3" /> Book
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Recommended Profiles Grid */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
               Recommended Profiles ({filteredProfiles.length})
             </h3>
           </div>
@@ -197,10 +351,10 @@ export const HomeView: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {filteredProfiles.map((profile) => {
                 const isLiked = likedProfileIds.includes(profile.id);
-                const isFav = favoriteProfileIds.includes(profile.id);
+                const activeBooking = meetRequests.find(r => r.profileId === profile.id);
 
                 return (
                   <motion.div
@@ -212,7 +366,7 @@ export const HomeView: React.FC = () => {
                   >
                     {/* Top Photo & Badges */}
                     <div 
-                      className="relative h-64 overflow-hidden cursor-pointer"
+                      className="relative h-60 overflow-hidden cursor-pointer"
                       onClick={() => setActiveProfileModal(profile)}
                     >
                       <img
@@ -237,7 +391,7 @@ export const HomeView: React.FC = () => {
                         )}
                       </div>
 
-                      {/* Like & Favorite Button */}
+                      {/* Like Button */}
                       <div className="absolute top-3 right-3 flex items-center gap-2">
                         <button
                           onClick={(e) => {
@@ -291,17 +445,27 @@ export const HomeView: React.FC = () => {
 
                       {/* Actions Footer */}
                       <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-                        <button
-                          onClick={() => setActiveMeetModal(profile)}
-                          className="flex-1 py-2.5 min-h-[44px] bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-xs font-semibold rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"
-                        >
-                          <Coffee className="w-4 h-4" />
-                          <span>Request Broker Booking</span>
-                        </button>
+                        {activeBooking ? (
+                          <button
+                            onClick={() => setActiveTab('meet-requests')}
+                            className="flex-1 py-2.5 min-h-[40px] bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"
+                          >
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>Booked ({activeBooking.status === 'pending_broker_approval' ? 'Pending' : 'Approved'})</span>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setActiveMeetModal(profile)}
+                            className="flex-1 py-2.5 min-h-[40px] bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"
+                          >
+                            <Coffee className="w-4 h-4" />
+                            <span>Book Model</span>
+                          </button>
+                        )}
                         
                         <button
                           onClick={() => setActiveProfileModal(profile)}
-                          className="px-3.5 py-2.5 min-h-[44px] bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors flex items-center gap-1"
+                          className="px-3 py-2.5 min-h-[40px] bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors flex items-center gap-1"
                         >
                           <span>Profile</span>
                           <ArrowUpRight className="w-4 h-4" />
@@ -317,7 +481,7 @@ export const HomeView: React.FC = () => {
         </div>
 
         {/* Tiruppur Community Safety & Testimonials Banner */}
-        <div className="bg-gradient-to-r from-slate-900 to-rose-950 text-white rounded-3xl p-6 sm:p-8 space-y-4">
+        <div className="bg-gradient-to-r from-slate-900 to-rose-950 text-white rounded-3xl p-5 sm:p-7 space-y-4">
           <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4" />
             <span>PairX Tiruppur Safety & Trust Standard</span>
@@ -348,7 +512,7 @@ export const HomeView: React.FC = () => {
                 <Star className="w-3.5 h-3.5 fill-current" />
                 <Star className="w-3.5 h-3.5 fill-current" />
               </div>
-              <p className="text-xs text-slate-200 font-medium">"The 30-min coffee option takes away the awkwardness of long dates. Excellent design!"</p>
+              <p className="text-xs text-slate-200 font-medium font-sans">"The 30-min coffee option takes away the awkwardness of long dates. Excellent design!"</p>
               <span className="text-[10px] text-rose-300 font-semibold block">– Sathish K., Avinashi Road</span>
             </div>
           </div>

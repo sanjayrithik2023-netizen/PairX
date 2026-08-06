@@ -4,13 +4,11 @@ import {
   CheckCircle2, XCircle, AlertCircle, MessageSquare, Building2 
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { MeetRequest } from '../types';
 
 export const MeetRequestsView: React.FC = () => {
   const { 
     meetRequests, 
-    setActiveTab, 
-    currentUser
+    setActiveTab
   } = useApp();
 
   const [filterTab, setFilterTab] = useState<'all' | 'pending' | 'approved'>('all');
@@ -26,17 +24,17 @@ export const MeetRequestsView: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {/* Header Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-xs">
           <div>
             <div className="flex items-center gap-2 text-rose-600 font-bold text-xs uppercase tracking-wider">
               <Calendar className="w-4 h-4" />
-              <span>Connect Desk</span>
+              <span>Booking Desk</span>
             </div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
-              My Connect Requests
+              My Bookings
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              All connections are processed by PairX Single Broker Desk and conducted at official Service Point lounges.
+              All meetups are processed by PairX Single Broker Desk and conducted at official Service Point lounges in Tiruppur.
             </p>
           </div>
 
@@ -73,15 +71,15 @@ export const MeetRequestsView: React.FC = () => {
         {filteredRequests.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center space-y-3 border border-slate-200">
             <Coffee className="w-12 h-12 text-rose-300 mx-auto" />
-            <h3 className="text-base font-bold text-slate-800">No booking requests found</h3>
+            <h3 className="text-base font-bold text-slate-800">No active bookings found</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              Explore verified female profiles on the home screen and submit a request to the Broker!
+              Explore verified female profiles on the home screen and submit a booking request to the Broker!
             </p>
             <button
               onClick={() => setActiveTab('home')}
               className="px-4 py-2 bg-rose-600 text-white text-xs font-semibold rounded-xl hover:bg-rose-700 transition-colors inline-block"
             >
-              Explore Girl Profiles
+              Explore Profiles & Book
             </button>
           </div>
         ) : (
@@ -95,106 +93,94 @@ export const MeetRequestsView: React.FC = () => {
                   {/* Top Bar Status */}
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Request #{req.id.slice(-5)}</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Booking ID #{req.id.slice(-5)}</span>
                       <span className="bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3 text-purple-600" /> Broker Monitored
+                        <ShieldCheck className="w-3 h-3 text-purple-600" /> Single Broker Verified
                       </span>
                     </div>
 
-                    {/* Status Pill */}
                     {req.status === 'pending_broker_approval' && (
-                      <span className="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 animate-spin" /> Pending Broker Clearance
+                      <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" /> Pending Clearance
                       </span>
                     )}
+
                     {req.status === 'broker_approved' && (
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Approved by Broker
+                      <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Lounge Approved
                       </span>
                     )}
-                    {req.status === 'rejected' && (
-                      <span className="bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                        <XCircle className="w-3.5 h-3.5" /> Declined by Broker
+
+                    {req.status === 'declined' && (
+                      <span className="bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                        <XCircle className="w-3.5 h-3.5 text-rose-600" /> Booking Declined
                       </span>
                     )}
                   </div>
 
-                  {/* Details Content */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  {/* Profile & Booking Details */}
+                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                     <div className="flex items-center gap-3">
                       <img
-                        src={req.targetProfilePhoto}
-                        alt={req.targetProfileName}
+                        src={req.profileAvatar}
+                        alt={req.profileName}
                         className="w-14 h-14 rounded-2xl object-cover border-2 border-rose-500 shadow-xs"
                       />
                       <div>
-                        <h3 className="font-bold text-base text-slate-900">{req.targetProfileName}</h3>
-                        <p className="text-xs text-rose-600 font-semibold mt-0.5">
-                          Verified Profile (Broker Managed)
+                        <h3 className="font-extrabold text-slate-900 text-base">{req.profileName}</h3>
+                        <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-3.5 h-3.5 text-rose-500" />
+                          <span>{req.servicePointName}</span>
                         </p>
                       </div>
                     </div>
 
-                    {/* Service Point Schedule Badge */}
-                    <div className="bg-rose-50/70 border border-rose-100 p-3 rounded-2xl space-y-1 text-xs text-rose-950 font-medium">
-                      <div className="flex items-center gap-2 font-bold text-rose-700">
-                        <Coffee className="w-4 h-4" />
-                        <span>{req.durationMinutes} Min Meeting</span>
+                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-xs space-y-1 w-full sm:w-auto min-w-[200px]">
+                      <div className="flex justify-between gap-4">
+                        <span className="text-slate-400 font-medium">Date & Time:</span>
+                        <strong className="text-slate-800">{req.date} @ {req.time}</strong>
                       </div>
-                      <div className="flex items-center gap-2 text-slate-700">
-                        <Calendar className="w-3.5 h-3.5 text-rose-500" />
-                        <span>{req.date} at {req.timeSlot}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-slate-700">
-                        <Building2 className="w-3.5 h-3.5 text-purple-600" />
-                        <span className="font-semibold">{req.servicePointName}</span>
+                      <div className="flex justify-between gap-4">
+                        <span className="text-slate-400 font-medium">Duration:</span>
+                        <strong className="text-slate-800">{req.duration} Minutes</strong>
                       </div>
                     </div>
                   </div>
 
-                  {/* Notes */}
-                  {req.notes && (
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs text-slate-600">
-                      <span className="font-semibold text-slate-800">Your Note: </span>
-                      "{req.notes}"
+                  {/* Broker Lounge Pin Info */}
+                  {req.status === 'broker_approved' && (
+                    <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                          <Building2 className="w-4 h-4 text-emerald-600" />
+                          Official Lounge Access Pass
+                        </span>
+                        <span className="bg-emerald-700 text-white font-mono text-xs font-extrabold px-2.5 py-1 rounded-lg">
+                          PIN: {req.brokerApprovalPin || '8842'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-emerald-800">
+                        Present this pass PIN to the service manager upon arrival at <strong>{req.servicePointName}</strong>.
+                      </p>
                     </div>
                   )}
 
-                  {req.brokerNotes && (
-                    <div className="bg-purple-50 p-3 rounded-xl border border-purple-100 text-xs text-purple-900 font-medium">
-                      <span className="font-bold text-purple-700">Broker Response: </span>
-                      "{req.brokerNotes}"
-                    </div>
-                  )}
-
-                  {/* Actions Footer */}
-                  <div className="flex items-center justify-between pt-2">
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
                     <button
                       onClick={() => setActiveTab('messages')}
-                      className="text-xs text-rose-600 font-semibold hover:underline flex items-center gap-1"
+                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors flex items-center gap-1.5 min-h-[38px]"
                     >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      <span>Chat with Single Broker Desk</span>
+                      <MessageSquare className="w-4 h-4 text-slate-500" />
+                      <span>Chat with Broker Desk</span>
                     </button>
-
-                    {req.status === 'broker_approved' && (
-                      <button
-                        onClick={() => setActiveTab('messages')}
-                        className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs rounded-xl shadow-xs"
-                      >
-                        Open Broker WebRTC Call
-                      </button>
-                    )}
                   </div>
-
                 </div>
               );
             })}
           </div>
         )}
-
       </div>
     </div>
   );
 };
-
