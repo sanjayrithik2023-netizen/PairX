@@ -1,0 +1,6 @@
+{
+  "name": "PairX",
+  "description": "Premium mobile-first local dating and social connection platform for Tiruppur adults.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
