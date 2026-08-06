@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
@@ -19,7 +19,27 @@ import { LoginModal } from './components/LoginModal';
 import { ProfileView } from './components/ProfileView';
 
 function MainLayout() {
-  const { activeTab, callState } = useApp();
+  const { activeTab, setActiveTab, callState, loginDemoUser } = useApp();
+
+  // Listen for /admin/login or #admin URL access
+  useEffect(() => {
+    const handleRouteCheck = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path.includes('/admin') || hash.includes('admin')) {
+        loginDemoUser('admin');
+        setActiveTab('admin');
+      }
+    };
+
+    handleRouteCheck();
+    window.addEventListener('popstate', handleRouteCheck);
+    window.addEventListener('hashchange', handleRouteCheck);
+    return () => {
+      window.removeEventListener('popstate', handleRouteCheck);
+      window.removeEventListener('hashchange', handleRouteCheck);
+    };
+  }, [setActiveTab, loginDemoUser]);
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white">

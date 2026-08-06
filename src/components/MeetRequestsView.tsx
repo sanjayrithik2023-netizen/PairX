@@ -30,13 +30,13 @@ export const MeetRequestsView: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-rose-600 font-bold text-xs uppercase tracking-wider">
               <Calendar className="w-4 h-4" />
-              <span>Broker Service Point Bookings</span>
+              <span>Connect Desk</span>
             </div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
-              My Broker Clearance Requests
+              My Connect Requests
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              All bookings are processed by PairX Single Broker Desk and conducted at official Service Point lounges.
+              All connections are processed by PairX Single Broker Desk and conducted at official Service Point lounges.
             </p>
           </div>
 

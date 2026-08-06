@@ -45,23 +45,6 @@ export const HomeView: React.FC = () => {
     <div className="min-h-screen bg-slate-50 pb-20 pt-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-        {/* Hero Welcome Banner */}
-        <div className="relative rounded-3xl bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 text-white p-6 sm:p-8 overflow-hidden shadow-xl">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
-          <div className="relative z-10 max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold">
-              <ShieldCheck className="w-4 h-4 text-emerald-300" />
-              <span>Licensed Broker-Managed Model • Tiruppur</span>
-            </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-              Verified Girl Profiles Managed by Single Broker Desk
-            </h1>
-            <p className="text-xs sm:text-sm text-rose-100 leading-relaxed">
-              To guarantee female privacy & safety, all girl profiles are curated and managed by the central PairX Broker. Select a profile and submit a booking request for an official Tiruppur Service Point. Once approved, speak directly to the Broker via WebRTC Call!
-            </p>
-          </div>
-        </div>
-
         {/* Search Bar & Quick Filters */}
         <div className="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 space-y-3">
           <div className="flex gap-2">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, MessageSquare, Calendar, Shield, User, Users, Building2, ArrowLeft, BarChart3, Bell } from 'lucide-react';
+import { Home, MessageSquare, Calendar, Shield, Users, Building2, ArrowLeft, BarChart3, Bell, PhoneCall } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
@@ -9,14 +9,14 @@ export const BottomNav: React.FC = () => {
     adminSubTab, 
     setAdminSubTab, 
     conversations, 
-    meetRequests, 
-    isAdmin 
+    meetRequests,
+    startCall
   } = useApp();
 
   const totalUnreadMessages = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
   const pendingRequestsCount = meetRequests.filter(r => r.status === 'pending_broker_approval').length;
 
-  // BROKER DASHBOARD MOBILE BOTTOM NAV
+  // BROKER DESK MOBILE BOTTOM NAV (Only visible when activeTab === 'admin')
   if (activeTab === 'admin') {
     const brokerNavItems = [
       { id: 'overview', label: 'Dashboard', icon: BarChart3 },
@@ -69,16 +69,12 @@ export const BottomNav: React.FC = () => {
   }
 
   // STANDARD CLIENT VIEW MOBILE BOTTOM NAV
-  const baseNavItems = [
+  const navItems = [
     { id: 'home', label: 'Explore', icon: Home },
-    { id: 'meet-requests', label: 'Bookings', icon: Calendar, badge: pendingRequestsCount },
-    { id: 'messages', label: 'Broker Desk', icon: MessageSquare, badge: totalUnreadMessages },
-    { id: 'profile', label: 'My Account', icon: User },
+    { id: 'meet-requests', label: 'Connect', icon: Calendar, badge: pendingRequestsCount },
+    { id: 'messages', label: 'Messages', icon: MessageSquare, badge: totalUnreadMessages },
+    { id: 'calls', label: 'Calls', icon: PhoneCall, isCall: true },
   ];
-
-  const navItems = isAdmin 
-    ? [...baseNavItems, { id: 'admin', label: 'Broker Desk', icon: Shield, badge: pendingRequestsCount }]
-    : baseNavItems;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg px-2 py-1 sm:hidden">
@@ -89,9 +85,15 @@ export const BottomNav: React.FC = () => {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center justify-center w-14 h-full relative transition-colors ${
-                isActive ? 'text-rose-600 font-semibold' : 'text-slate-500 hover:text-slate-800'
+              onClick={() => {
+                if (item.isCall) {
+                  startCall('video');
+                } else {
+                  setActiveTab(item.id);
+                }
+              }}
+              className={`flex flex-col items-center justify-center w-16 h-full relative transition-colors ${
+                isActive ? 'text-rose-600 font-bold' : item.isCall ? 'text-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
             >
               <div className="relative">
@@ -113,5 +115,3 @@ export const BottomNav: React.FC = () => {
     </nav>
   );
 };
-
-
