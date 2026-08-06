@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   UserProfile, 
   ServicePoint,
@@ -437,7 +437,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => clearInterval(timer);
   }, [callState.active, callState.incoming]);
 
-  const loginDemoUser = (role: 'user' | 'admin') => {
+  const loginDemoUser = useCallback((role: 'user' | 'admin') => {
     setIsAuthenticated(true);
     if (role === 'admin') {
       setIsAdmin(true);
@@ -453,7 +453,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setActiveTab('home');
     }
     setIsLoginModalOpen(false);
-  };
+  }, []);
 
   const logout = () => {
     setIsAuthenticated(false);
@@ -818,59 +818,79 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setNotifications(prev => [newNotif, ...prev]);
   };
 
-  return (
-    <AppContext.Provider
-      value={{
-        currentUser,
-        isAuthenticated,
-        isAdmin,
-        activeTab,
-        setActiveTab,
-        adminSubTab,
-        setAdminSubTab,
-        profiles,
-        servicePoints,
-        favoriteProfileIds,
-        likedProfileIds,
-        meetRequests,
-        conversations,
-        chatMessages,
-        notifications,
-        callState,
-        userPreferences,
-        activeProfileModal,
-        setActiveProfileModal,
-        activeMeetModal,
-        setActiveMeetModal,
-        isLoginModalOpen,
-        setIsLoginModalOpen,
+  const contextValue = useMemo(() => ({
+    currentUser,
+    isAuthenticated,
+    isAdmin,
+    activeTab,
+    setActiveTab,
+    adminSubTab,
+    setAdminSubTab,
+    profiles,
+    servicePoints,
+    favoriteProfileIds,
+    likedProfileIds,
+    meetRequests,
+    conversations,
+    chatMessages,
+    notifications,
+    callState,
+    userPreferences,
+    activeProfileModal,
+    setActiveProfileModal,
+    activeMeetModal,
+    setActiveMeetModal,
+    isLoginModalOpen,
+    setIsLoginModalOpen,
 
-        loginDemoUser,
-        logout,
-        toggleLikeProfile,
-        toggleFavoriteProfile,
-        createMeetRequest,
-        updateMeetRequestStatus,
-        addGirlProfile,
-        updateGirlProfile,
-        deleteGirlProfile,
-        addServicePoint,
-        updateServicePoint,
-        deleteServicePoint,
-        sendMessage,
-        generateAIIcebreaker,
-        startCall,
-        endCall,
-        acceptCall,
-        declineCall,
-        toggleMuteCall,
-        toggleVideoCall,
-        markNotificationsRead,
-        updateUserPreferences,
-        broadcastNotification,
-        triggerSimulatedIncomingCall
-      }}
-    >
+    loginDemoUser,
+    logout,
+    toggleLikeProfile,
+    toggleFavoriteProfile,
+    createMeetRequest,
+    updateMeetRequestStatus,
+    addGirlProfile,
+    updateGirlProfile,
+    deleteGirlProfile,
+    addServicePoint,
+    updateServicePoint,
+    deleteServicePoint,
+    sendMessage,
+    generateAIIcebreaker,
+    startCall,
+    endCall,
+    acceptCall,
+    declineCall,
+    toggleMuteCall,
+    toggleVideoCall,
+    markNotificationsRead,
+    updateUserPreferences,
+    broadcastNotification,
+    triggerSimulatedIncomingCall
+  }), [
+    currentUser,
+    isAuthenticated,
+    isAdmin,
+    activeTab,
+    adminSubTab,
+    profiles,
+    servicePoints,
+    favoriteProfileIds,
+    likedProfileIds,
+    meetRequests,
+    conversations,
+    chatMessages,
+    notifications,
+    callState,
+    userPreferences,
+    activeProfileModal,
+    activeMeetModal,
+    isLoginModalOpen,
+    loginDemoUser
+  ]);
+
+  return (
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

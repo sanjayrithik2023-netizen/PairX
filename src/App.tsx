@@ -21,16 +21,15 @@ import { NotificationsView } from './components/NotificationsView';
 import { CallsView } from './components/CallsView';
 
 function MainLayout() {
-  const { activeTab, setActiveTab, callState, loginDemoUser } = useApp();
+  const { activeTab, setActiveTab, callState, loginDemoUser, isAdmin } = useApp();
 
   // Listen for /admin/login or #admin URL access
   useEffect(() => {
     const handleRouteCheck = () => {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
-      if (path.includes('/admin') || hash.includes('admin')) {
+      if ((path.includes('/admin') || hash.includes('admin')) && !isAdmin) {
         loginDemoUser('admin');
-        setActiveTab('admin');
       }
     };
 
@@ -41,7 +40,7 @@ function MainLayout() {
       window.removeEventListener('popstate', handleRouteCheck);
       window.removeEventListener('hashchange', handleRouteCheck);
     };
-  }, [setActiveTab, loginDemoUser]);
+  }, [isAdmin, loginDemoUser]);
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white">

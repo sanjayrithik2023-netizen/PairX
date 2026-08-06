@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Heart, Bell, Search, MapPin, MessageSquare, Calendar, Home as HomeIcon, LogIn
+  Heart, Bell, Search, MapPin, MessageSquare, Calendar, Home as HomeIcon, LogIn, ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -11,7 +11,9 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onOpenSearchFilter }) => {
   const { 
     currentUser, 
-    isAuthenticated, 
+    isAuthenticated,
+    isAdmin,
+    loginDemoUser, 
     notifications, 
     markNotificationsRead,
     setActiveTab, 
@@ -115,6 +117,31 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearchFilter }) => {
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center animate-pulse border border-white">
                 {unreadCount}
               </span>
+            )}
+          </button>
+
+          {/* Admin Login / Portal Button near Bell Icon */}
+          <button
+            onClick={() => {
+              if (!isAdmin) {
+                loginDemoUser('admin');
+              } else {
+                setActiveTab('admin');
+              }
+            }}
+            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border min-h-[36px] shrink-0 ${
+              activeTab === 'admin'
+                ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
+                : isAdmin
+                ? 'bg-purple-100 text-purple-900 border-purple-300 hover:bg-purple-200'
+                : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200/90'
+            }`}
+            title={isAdmin ? "Open Admin Dashboard" : "Single Broker Admin Login"}
+          >
+            <ShieldCheck className="w-4 h-4 text-purple-600 fill-purple-100 group-hover:scale-110 transition-transform" />
+            <span className="font-extrabold text-xs">Admin</span>
+            {isAdmin && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 border border-white shrink-0"></span>
             )}
           </button>
 
